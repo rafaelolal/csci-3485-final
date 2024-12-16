@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from numpy import ndarray
 from torch import Tensor, topk
 from torch.nn.functional import cosine_similarity
@@ -17,6 +18,17 @@ from .schemas import CreateRequest, DeleteRequest, ReadRequest, UpdateRequest
 
 api = FastAPI()
 app = App()
+
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "*",
+    ],
+    allow_methods=["POST", "GET"],
+    allow_headers=["Content-Type", "Authorization"],
+    allow_credentials=True,
+    max_age=3600,
+)
 
 
 @api.on_event("startup")
