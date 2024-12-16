@@ -1,4 +1,4 @@
-# Easy Embed
+# Easy Embed App
 
 Simple self-hosted semantic search API.
 
@@ -13,8 +13,22 @@ pip install easy-embed
 from easy_embed import App
 
 app = App()
-# optional
+
+# Optional: set a SentenceTransformer model by passing in whatever necessary
+# arguments
 # app.set_model(**kwargs)
+# 
+# Optional: set device
+# app.set_model_device(my_device)
+#
+# Optional: models that require further setup before being used can be
+# accessed through `app.model`
+# app.model.prepare()
+#
+# Optional: for models with unique encoding functions, you can override
+# `app.encode` with `custom_encode` using default parameters and custom logic
+# app.encode = lambda text, new = "hi": app.model.transform(text, new)
+
 app.run(host="0.0.0.0", port=8000)
 ```
 

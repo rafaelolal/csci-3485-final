@@ -26,65 +26,65 @@ def on_startup():
 
 @api.post("/create")
 def create_api(request: CreateRequest, session: SessionDep) -> dict:
-    try:
-        created = create_embedding(
-            session=session,
-            doc=request.doc,
-            embedding=tolist(app.model.encode(request.doc)),
-            index=request.index,
-            collection=request.collection,
-        )
-
-        if created:
-            return {
-                "status": "success",
-            }
-
-        else:
-            raise HTTPException(
-                status_code=500, detail="Failed to create embedding"
-            )
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@api.post("/read")
-def read_api(request: ReadRequest, session: SessionDep) -> dict:
     # try:
-    if request.docs and request.collection:
-        raise HTTPException(
-            status_code=400,
-            detail="Only one of 'docs' or 'collection' should be provided",
-        )
-
-    search = []
-    if request.docs:
-        search = enumerate(request.docs)
-    if request.collection:
-        search = (
-            (db_embedding.index, db_embedding.doc)
-            for db_embedding in read_collection(session, request.collection)
-        )
-
-    if not search:
-        raise HTTPException(status_code=400, detail="No documents to search")
-
-    q = app.model.encode(request.q, convert_to_tensor=True)
-    docs = app.model.encode(
-        [item[1] for item in search], convert_to_tensor=True
+    created = create_embedding(
+        session=session,
+        doc=request.doc,
+        embedding=tolist(app.encode(request.doc, convert_to_tensor=True)),
+        index=request.index,
+        collection=request.collection,
     )
-    similarities = cosine_similarity(q.unsqueeze(0), docs, dim=-1)
-    scores, indices = topk(similarities, min(request.k, len(docs)))
 
     return {
-        "scores": tolist(scores),
-        "indices": [item[0] for item in search],
+        "status": "success",
     }
 
 
 # except Exception as e:
 #     raise HTTPException(status_code=500, detail=str(e))
+
+
+@api.post("/read")
+def read_api(request: ReadRequest, session: SessionDep) -> dict:
+    try:
+        if request.docs and request.collection:
+            raise HTTPException(
+                status_code=400,
+                detail="Only one of 'docs' or 'collection' should be provided",
+            )
+
+        search = []
+        if request.docs:
+            search = enumerate(request.docs)
+        if request.collection:
+            search = (
+                (db_embedding.index, db_embedding.doc)
+                for db_embedding in read_collection(
+                    session, request.collection
+                )
+            )
+
+        search = tuple(search)
+
+        if not search:
+            raise HTTPException(
+                status_code=400, detail="No documents to search"
+            )
+
+        q = app.encode(request.q, convert_to_tensor=True)
+        docs = app.encode(
+            tuple(item[1] for item in search), convert_to_tensor=True
+        )
+        similarities = cosine_similarity(q.unsqueeze(0), docs, dim=-1)
+        scores, indices = topk(similarities, min(request.k, len(docs)))
+
+        return {
+            "scores": tolist(scores),
+            "indices": [search[i][0] for i in tolist(indices)],
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @api.put("/update")
@@ -98,18 +98,14 @@ def update_api(
             index=update_data.index,
             collection=update_data.collection,
             doc=update_data.doc,
-            embedding_values=tolist(app.model.encode(update_data.doc)),
+            embedding_values=tolist(
+                app.encode(update_data.doc, convert_to_tensor=True)
+            ),
         )
 
-        if updated:
-            return {
-                "status": "success",
-            }
-
-        else:
-            raise HTTPException(
-                status_code=500, detail="Failed to update embedding"
-            )
+        return {
+            "status": "success",
+        }
 
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
