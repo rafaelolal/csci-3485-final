@@ -5,7 +5,7 @@ with open("easy_embed/README.md", "r") as f:
     long_description = f.read()
 
 setup(
-    name="easy_embed",  # easy_embed/src
+    name="easy-embed-rafaelolal",  # easy_embed/src
     version="1.0.0",
     description="Simple self-hosted semantic search API",
     package_dir={"": "easy_embed"},  # easy_embed/easy_embed

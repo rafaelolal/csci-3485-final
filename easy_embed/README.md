@@ -8,7 +8,7 @@ Demo: https://github.com/rafaelolal/csci-3485-final/blob/main/CSCI_3485_Final_Pr
 
 ## Installation
 ```bash
-pip install easy-embed
+pip install easy-embed-rafaelolal
 ```
 
 ## Usage
