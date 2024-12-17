@@ -1,7 +1,7 @@
 # Easy Embed Package
 
-Source code located in `/easy_embed/easy_embed/src`
-Source code link: https://github.com/rafaelolal/csci-3485-final/tree/main/easy_embed/easy_embed/src
+Source code located in `/easy_embed/easy_embed/src`  
+Source code link: https://github.com/rafaelolal/csci-3485-final/tree/main/easy_embed/easy_embed/src  
 
 PyPi page: https://pypi.org/project/easy-embed-rafaelolal/1.0.0/
 
