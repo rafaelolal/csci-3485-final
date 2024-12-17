@@ -44,7 +44,7 @@ Visit the `/docs` url for more information and for quick testing.
 
 Below are example values for the response body:
 
-#### create
+#### /create
 
 ```
 {
@@ -54,7 +54,7 @@ Below are example values for the response body:
 }
 ```
 
-#### read
+#### /read
 
 Use the below values only for small and simple semantic search tasks. Consider using the `collection` value for more documents or more frequent needs.
 ```
@@ -76,7 +76,7 @@ Use the below values if you have already used the `create` endpoint to precomput
 }
 ```
 
-#### update
+#### /update
 
 The main purpose of this endpoint is to keep the embeddings up to date with your data. Consider creating a custom script to automatically make a call to this endpoint whenever a datapoint is edited in your database.
 ```
@@ -87,7 +87,7 @@ The main purpose of this endpoint is to keep the embeddings up to date with your
 }
 ```
 
-#### delete
+#### /delete
 
 ```
 {
