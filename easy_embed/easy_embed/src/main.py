@@ -1,9 +1,25 @@
+"""Easy Embed Application Module
+
+This module provides a singleton application class for managing the model and API server.
+It handles model initialization, device selection, and encoding functionality.
+"""
+
 from sentence_transformers import SentenceTransformer
 from torch import cuda
 from torch.backends import mps
 
 
 class App:
+    """A singleton class that manages the model and the API server.
+
+    Attributes:
+        _instance (App): Singleton instance of the App class.
+        model (SentenceTransformer): The transformer model used for encoding.
+        allow_origins (list[str]): List of allowed CORS origins.
+        _initialized (bool): Flag indicating if instance has been initialized.
+        _default_encode: Reference to default encode implementation.
+    """
+
     _instance: "App" = None
 
     def __new__(cls) -> "App":
@@ -24,6 +40,13 @@ class App:
             )  # Store reference to default implementation
 
     def run(self, host: str, port: int, allow_origins: list[str]) -> None:
+        """Run the FastAPI server with the specified configurations.
+
+        This method initializes and starts the FastAPI server with the given host and port.
+        If no model is set, it defaults to 'GIST-Embedding-v0'. If no encode function is
+        defined, it sets a default encoding function using the model's encode method.
+        """
+
         self.allow_origins = allow_origins
 
         # Setting a default model and encode function
@@ -55,6 +78,12 @@ class App:
         uvicorn.run(api, host=host, port=port)
 
     def set_model(self, **model_kwargs: dict) -> None:
+        """Sets up the model for inference.
+
+        This method initializes a SentenceTransformer model with the provided keyword arguments
+        and sets it up for inference.
+        """
+
         self.model = SentenceTransformer(**model_kwargs)
         self.model.eval()
         self.model.zero_grad()

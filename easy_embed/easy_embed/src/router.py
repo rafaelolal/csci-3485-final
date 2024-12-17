@@ -1,3 +1,9 @@
+"""FastAPI router for managing embedding operations.
+
+This module provides a REST API for creating, reading, updating, and deleting embeddings.
+It uses FastAPI framework and integrates with a database for optimized operations.
+"""
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from numpy import ndarray
@@ -36,26 +42,31 @@ def on_startup():
 
 @api.post("/create")
 def create_api(request: CreateRequest, session: SessionDep) -> dict:
-    # try:
-    created = create_embedding(
-        session=session,
-        doc=request.doc,
-        embedding=tolist(app.encode(request.doc, convert_to_tensor=True)),
-        index=request.index,
-        collection=request.collection,
-    )
+    try:
+        created = create_embedding(
+            session=session,
+            doc=request.doc,
+            embedding=tolist(app.encode(request.doc, convert_to_tensor=True)),
+            index=request.index,
+            collection=request.collection,
+        )
 
-    return {
-        "status": "success",
-    }
+        return {
+            "status": "success",
+        }
 
-
-# except Exception as e:
-#     raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @api.post("/read")
 def read_api(request: ReadRequest, session: SessionDep) -> dict:
+    """Process a read request for document similarity search.
+
+    This function handles searching for similar documents either from a provided list of documents
+    or from a stored collection, using cosine similarity for comparison.
+    """
+
     try:
         if request.docs and request.collection:
             raise HTTPException(
@@ -146,6 +157,8 @@ def delete_api(
 
 
 def tolist(data: Tensor | ndarray) -> list:
+    """Converts a Tensor or numpy array to a list for storing in the database."""
+
     if isinstance(data, Tensor):
         return data.cpu().numpy().tolist()
 
