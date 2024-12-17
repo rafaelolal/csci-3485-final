@@ -18,11 +18,14 @@ class App:
             self._initialized = True
 
             self.model = None
+            self.allow_origins = []
             self._default_encode = self.encode.__get__(
                 self, App
             )  # Store reference to default implementation
 
-    def run(self, host: str, port: int) -> None:
+    def run(self, host: str, port: int, allow_origins: list[str]) -> None:
+        self.allow_origins = allow_origins
+
         # Setting a default model and encode function
         if not self.model:
             self.set_model(
@@ -57,7 +60,9 @@ class App:
         self.model.zero_grad()
         self.model.requires_grad_(False)
 
-    def encode(self, text: str | list[str], *args: list, **kwargs: dict):
+    def encode(
+        self, text: str | list[str], *args: list, **kwargs: dict
+    ) -> list[float] | list[list[float]]:
         """Default encode implementation that raises NotImplementedError"""
 
         raise NotImplementedError

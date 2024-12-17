@@ -21,10 +21,8 @@ app = App()
 
 api.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "*",
-    ],
-    allow_methods=["POST", "GET"],
+    allow_origins=app.allow_origins,
+    allow_methods=["POST", "GET", "PUT", "DELETE"],
     allow_headers=["Content-Type", "Authorization"],
     allow_credentials=True,
     max_age=3600,
@@ -126,7 +124,7 @@ def update_api(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@api.put("/delete")
+@api.delete("/delete")
 def delete_api(
     delete_data: DeleteRequest,
     session: SessionDep,
